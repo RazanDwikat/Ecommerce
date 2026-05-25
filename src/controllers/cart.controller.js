@@ -1,5 +1,6 @@
 const {
-  addToCartService
+  addToCartService,
+  getMyCartService
 } = require("../services/cart.service");
 
 const addToCart = async (req, res) => {
@@ -24,6 +25,26 @@ const addToCart = async (req, res) => {
   }
 };
 
+const getMyCart = async (req, res) => {
+  try {
+
+    const cart = await getMyCartService(req.user._id);
+
+    res.status(200).json({
+      message: "Cart fetched successfully",
+      cart
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+};
+
 module.exports = {
-  addToCart
+  addToCart,
+  getMyCart
 };
