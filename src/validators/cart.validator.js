@@ -2,7 +2,6 @@ const Joi = require("joi");
 
 const addToCartSchema = Joi.object({
   productId: Joi.string().required(),
-
   quantity: Joi.number().min(1).required()
 });
 
