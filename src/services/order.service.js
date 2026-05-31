@@ -62,6 +62,22 @@ const createOrderService = async (userId) => {
   return order;
 };
 
+
+
+// GET MY ORDERS
+const getMyOrdersService = async (userId) => {
+
+  const orders = await Order.find({ user: userId })
+    .populate({
+      path: "items.product",
+      select: "name images price"
+    })
+    .sort({ createdAt: -1 }); 
+
+  return orders;
+};
+
 module.exports = {
-  createOrderService
+  createOrderService,
+  getMyOrdersService
 };
