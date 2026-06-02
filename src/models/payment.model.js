@@ -19,9 +19,14 @@ const paymentSchema = new mongoose.Schema(
       required: true
     },
 
+    currency: {
+      type: String,
+      default: "usd"
+    },
+
     method: {
       type: String,
-      enum: ["card", "cash"],
+      enum: ["cash", "stripe"],
       required: true
     },
 
@@ -29,6 +34,19 @@ const paymentSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "completed", "failed"],
       default: "pending"
+    },
+
+    // Stripe (or simulator) PaymentIntent linkage
+    paymentIntentId: {
+      type: String
+    },
+
+    clientSecret: {
+      type: String
+    },
+
+    failureReason: {
+      type: String
     }
   },
   { timestamps: true }

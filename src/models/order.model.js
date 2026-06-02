@@ -63,6 +63,16 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "paid", "failed"],
       default: "pending"
+    },
+
+    paymentMethod: {
+      type: String,
+      enum: ["cash", "stripe"]
+    },
+
+    payment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Payment"
     }
   },
   { timestamps: true }

@@ -44,6 +44,9 @@ const createOrderService = async (userId) => {
   }
 
   // 5. create order
+  // NOTE: stock is NOT reduced and the cart is NOT cleared here. Both happen
+  // only after a successful payment (see fulfillOrderService), so a failed
+  // payment never consumes inventory or empties the customer's cart.
   const order = await Order.create({
     user: userId,
     items: orderItems,
@@ -52,19 +55,33 @@ const createOrderService = async (userId) => {
     paymentStatus: "pending"
   });
 
-  // 6. reduce stock
-  for (const item of cart.items) {
-    await Product.findByIdAndUpdate(item.product, {
-      $inc: { stock: -item.quantity }
-    });
+  return order;
+};
+
+// =========================================
+// FULFILL ORDER (reduce stock + clear cart)
+// =========================================
+// Called once a payment is confirmed (cash on checkout, or Stripe on success).
+// Stock is decremented atomically with a stock-availability guard so we never
+// oversell between order creation and payment confirmation.
+const fulfillOrderService = async (order) => {
+
+  for (const item of order.items) {
+    const updated = await Product.findOneAndUpdate(
+      { _id: item.product, stock: { $gte: item.quantity } },
+      { $inc: { stock: -item.quantity } },
+      { new: true }
+    );
+
+    if (!updated) {
+      throw new Error(`Not enough stock for ${item.name}`);
+    }
   }
 
-  // 7. clear cart
-  cart.items = [];
-  cart.totalPrice = 0;
-  await cart.save();
-
-  return order;
+  await Cart.findOneAndUpdate(
+    { user: order.user },
+    { $set: { items: [], totalPrice: 0 } }
+  );
 };
 
 // ========================
@@ -127,6 +144,7 @@ const updateOrderStatusService = async (orderId, status) => {
 
 module.exports = {
   createOrderService,
+  fulfillOrderService,
   getMyOrdersService,
   getOrderByIdService,
   getAllOrdersService,
