@@ -23,6 +23,16 @@ const reviewSchema = new mongoose.Schema(
 
     comment: {
       type: String
+    },
+
+    averageRating: {
+      type: Number,
+      default: 0
+    },
+
+    reviewsCount: {
+      type: Number,
+      default: 0
     }
   },
   { timestamps: true }

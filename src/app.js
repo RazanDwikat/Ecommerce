@@ -15,6 +15,7 @@ const categoryRoutes = require("./routes/category.routes");
 const cartRoutes = require("./routes/cart.routes");
 const orderRoutes = require("./routes/order.routes");
 const paymentRoutes = require("./routes/payment.routes");
+const reviewRoutes = require("./routes/review.routes");
 
 app.use("/orders", orderRoutes);
 app.use("/cart", cartRoutes);
@@ -22,4 +23,5 @@ app.use("/categories", categoryRoutes);
 app.use("/auth", authRoutes);
 app.use("/products", productRoutes);
 app.use("/payments", paymentRoutes);
+app.use("/reviews", reviewRoutes);
 module.exports = app;
