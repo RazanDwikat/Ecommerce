@@ -12,6 +12,7 @@ const {
 const authMiddleware = require("../middleware/auth.middleware");
 const adminMiddleware = require("../middleware/admin.middleware");
 const validate = require("../middleware/validate.middleware");
+const upload = require("../utils/upload");
 
 const {
   createProductSchema,
@@ -27,6 +28,13 @@ router.post(
   "/",
   authMiddleware,
   adminMiddleware,
+  upload.array("images", 5),
+  (req, res, next) => {
+    if (req.files && req.files.length > 0) {
+      req.body.images = req.files.map((file) => `/uploads/${file.filename}`);
+    }
+    next();
+  },
   validate(createProductSchema),
   createProduct
 );

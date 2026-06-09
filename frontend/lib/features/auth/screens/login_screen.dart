@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/providers/auth_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../home/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -48,6 +49,13 @@ class _LoginScreenState extends State<LoginScreen>
       final ok = await auth.login(
           _emailController.text.trim(), _passwordController.text);
       if (!mounted) return;
+
+      if (ok) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(ok ? 'Welcome back!' : auth.errorMessage ?? 'Login failed',
             style: GoogleFonts.dmSans(color: Colors.white)),

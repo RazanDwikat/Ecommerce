@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'features/auth/screens/login_screen.dart';
+import 'features/home/screens/home_screen.dart';
 import 'core/providers/auth_provider.dart';
 import 'core/theme/app_colors.dart';
 
@@ -16,9 +17,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => AuthProvider(),
-      child: MaterialApp(
-        title: 'E-commerce App',
-        debugShowCheckedModeBanner: false,
+      child: Consumer<AuthProvider>(
+        builder: (context, auth, _) {
+          return MaterialApp(
+            title: 'E-commerce App',
+            debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.light(
@@ -71,7 +74,9 @@ class MyApp extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16)),
           ),
         ),
-        home: const LoginScreen(),
+            home: auth.isAuthenticated ? const HomeScreen() : const LoginScreen(),
+          );
+        },
       ),
     );
   }
