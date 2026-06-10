@@ -22,6 +22,28 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> addToCart(String token, String productId, int quantity) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/cart'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'productId': productId,
+        'quantity': quantity,
+      }),
+    );
+
+    final body = jsonDecode(response.body);
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return body;
+    }
+
+    throw Exception(body['message'] ?? 'Failed to add product to cart');
+  }
+
   Future<Map<String, dynamic>> register(String name, String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/auth/register'),

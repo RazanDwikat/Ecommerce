@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../../../core/providers/auth_provider.dart';
+import '../../../core/services/api_service.dart';
 import '../../../core/services/category_service.dart';
 import '../../../core/services/product_service.dart';
 import '../../../core/theme/app_colors.dart';
@@ -186,6 +189,32 @@ class _ProductCard extends StatefulWidget {
 class _ProductCardState extends State<_ProductCard> {
   int _quantity = 1;
 
+  Future<void> _addToCart() async {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+
+    if (auth.token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please log in first to add items to cart.')),
+      );
+      return;
+    }
+
+    try {
+      await ApiService().addToCart(auth.token!, widget.product.id, _quantity);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${widget.product.name} added to cart x$_quantity')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -265,7 +294,7 @@ class _ProductCardState extends State<_ProductCard> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: _addToCart,
                       icon: const Icon(Icons.add_shopping_cart_outlined, size: 16),
                       label: const Text('Add to cart'),
                       style: ElevatedButton.styleFrom(
