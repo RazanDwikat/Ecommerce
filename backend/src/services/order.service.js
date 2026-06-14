@@ -65,8 +65,11 @@ const createOrderService = async (userId) => {
 // Stock is decremented atomically with a stock-availability guard so we never
 // oversell between order creation and payment confirmation.
 const fulfillOrderService = async (order) => {
+  console.log('[ORDER SERVICE] Fulfilling order:', order._id);
+  console.log('[ORDER SERVICE] Order items:', order.items.length);
 
   for (const item of order.items) {
+    console.log('[ORDER SERVICE] Processing item:', item.name, 'quantity:', item.quantity);
     const updated = await Product.findOneAndUpdate(
       { _id: item.product, stock: { $gte: item.quantity } },
       { $inc: { stock: -item.quantity } },
@@ -74,14 +77,18 @@ const fulfillOrderService = async (order) => {
     );
 
     if (!updated) {
+      console.log('[ORDER SERVICE] Not enough stock for:', item.name);
       throw new Error(`Not enough stock for ${item.name}`);
     }
+    console.log('[ORDER SERVICE] Stock reduced for:', item.name);
   }
 
+  console.log('[ORDER SERVICE] Clearing cart for user:', order.user);
   await Cart.findOneAndUpdate(
     { user: order.user },
     { $set: { items: [], totalPrice: 0 } }
   );
+  console.log('[ORDER SERVICE] Cart cleared');
 };
 
 // ========================
@@ -95,7 +102,8 @@ const getMyOrdersService = async (userId) => {
       totalPrice: 1,
       status: 1,
       paymentStatus: 1,
-      createdAt: 1
+      createdAt: 1,
+      items: 1
     }
   )
   .sort({ createdAt: -1 });

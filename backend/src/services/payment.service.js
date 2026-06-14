@@ -102,24 +102,32 @@ const payWithStripe = async (userId, order) => {
 // Idempotent: safe to call multiple times for the same intent.
 // =====================================================
 const handlePaymentSucceededService = async (paymentIntentId) => {
+  console.log('[PAYMENT SERVICE] Handling payment succeeded for intent:', paymentIntentId);
 
   const payment = await Payment.findOne({ paymentIntentId });
 
   if (!payment) {
+    console.log('[PAYMENT SERVICE] Payment not found for intent:', paymentIntentId);
     throw new Error("Payment not found for intent");
   }
 
+  console.log('[PAYMENT SERVICE] Payment found, status:', payment.status);
+
   if (payment.status === "completed") {
+    console.log('[PAYMENT SERVICE] Payment already completed, skipping');
     return payment; // already processed -> do not reduce stock twice
   }
 
   const order = await Order.findById(payment.order);
 
   if (!order) {
+    console.log('[PAYMENT SERVICE] Order not found for payment');
     throw new Error("Order not found for payment");
   }
 
+  console.log('[PAYMENT SERVICE] Order found, calling fulfillOrderService');
   await fulfillOrderService(order);
+  console.log('[PAYMENT SERVICE] fulfillOrderService completed');
 
   payment.status = "completed";
   payment.failureReason = undefined;
@@ -129,6 +137,7 @@ const handlePaymentSucceededService = async (paymentIntentId) => {
   order.status = "processing";
   await order.save();
 
+  console.log('[PAYMENT SERVICE] Payment succeeded handling completed');
   return payment;
 };
 

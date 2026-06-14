@@ -84,29 +84,38 @@ class _CartScreenState extends State<CartScreen> {
 
   // ── Place Order ───────────────────────────────────────────
   Future<void> _placeOrder() async {
+    print('[CART] Place order clicked');
     final token = context.read<AuthProvider>().token;
     if (token == null) {
+      print('[CART] No token found');
       _showSnack('Please log in first to place an order.');
       return;
     }
+    print('[CART] Token found');
 
     final method = await _showPaymentMethodDialog();
+    print('[CART] Payment method selected: $method');
     if (method == null || !mounted) return;
 
     try {
+      print('[CART] Creating order...');
       final orderRes = await _apiService.createOrder(token);
       final orderId = orderRes['order']['_id'] as String;
+      print('[CART] Order created: $orderId');
 
       if (method == 'cash') {
+        print('[CART] Processing cash payment...');
         await _apiService.createPayment(token, orderId, 'cash');
         await _loadCart();
         if (!mounted) return;
         _showSnack('Order placed! Payment on delivery.');
       } else {
+        print('[CART] Processing stripe payment...');
         final payRes =
             await _apiService.createPayment(token, orderId, 'stripe');
         final paymentIntentId = payRes['paymentIntentId'] as String;
         final amount = orderRes['order']['totalPrice'] as num;
+        print('[CART] Payment intent created: $paymentIntentId, amount: $amount');
         if (!mounted) return;
         await _showStripeFormDialog(
           token: token,
@@ -115,6 +124,7 @@ class _CartScreenState extends State<CartScreen> {
         );
       }
     } catch (e) {
+      print('[CART] Error: $e');
       if (!mounted) return;
       _showSnack(e.toString().replaceFirst('Exception: ', ''));
     }
@@ -555,7 +565,11 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
   }
 
   Future<void> _submitPayment() async {
-    if (!_formKey.currentState!.validate()) return;
+    print('[STRIPE] Submit payment clicked');
+    if (!_formKey.currentState!.validate()) {
+      print('[STRIPE] Form validation failed');
+      return;
+    }
 
     setState(() {
       _processing = true;
@@ -563,13 +577,16 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
     });
 
     try {
+      print('[STRIPE] Calling simulatePayment with intent: ${widget.paymentIntentId}');
       final result = await widget.apiService.simulatePayment(
         widget.token,
         widget.paymentIntentId,
         paymentMethod: _selectedScenario,
       );
+      print('[STRIPE] simulatePayment result: $result');
 
       final status = result['paymentIntentStatus'] as String? ?? '';
+      print('[STRIPE] Payment intent status: $status');
       if (!mounted) return;
 
       if (status == 'succeeded') {
@@ -591,6 +608,7 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
         widget.onFailure('Card declined');
       }
     } catch (e) {
+      print('[STRIPE] Error: $e');
       if (!mounted) return;
       final msg = e.toString().replaceFirst('Exception: ', '');
       setState(() {

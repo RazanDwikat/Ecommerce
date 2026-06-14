@@ -137,6 +137,22 @@ Future<Map<String, dynamic>> simulatePayment(
   return data;
 }
 
+Future<Map<String, dynamic>> getMyOrders(String token) async {
+  final response = await http.get(
+    Uri.parse('$baseUrl/orders/my-orders'),
+    headers: _authHeaders(token),
+  );
+  return _handleResponse(response, 'Failed to fetch orders');
+}
+
+Future<Map<String, dynamic>> getOrderById(String token, String orderId) async {
+  final response = await http.get(
+    Uri.parse('$baseUrl/orders/$orderId'),
+    headers: _authHeaders(token),
+  );
+  return _handleResponse(response, 'Failed to fetch order');
+}
+
 
   Map<String, dynamic> _handleResponse(http.Response response, String fallbackMessage) {
     final body = jsonDecode(response.body);
