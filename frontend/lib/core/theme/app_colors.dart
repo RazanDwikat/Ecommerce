@@ -54,4 +54,22 @@ abstract class AppColors {
   static const Color success      = Color(0xFF81C784);
   static const Color inputBorder  = steelBlue;
   static const Color inputFill    = white;
+
+  // ── Order Status Colors ─────────────────────────────────────────────────────
+
+  static const Color statusPending    = Color(0xFFFFA500);
+  static const Color statusProcessing = Color(0xFF2196F3);
+  static const Color statusShipped    = Color(0xFF9C27B0);
+  static const Color statusDelivered  = Color(0xFF4CAF50);
+  static const Color statusCancelled  = Color(0xFFF44336);
+
+  // ── Payment Status Colors ──────────────────────────────────────────────────
+
+  static const Color paymentPaid    = Color(0xFF4CAF50);
+  static const Color paymentPending = Color(0xFFFFA500);
+  static const Color paymentFailed  = Color(0xFFF44336);
+
+  // ── Stripe Color ───────────────────────────────────────────────────────────
+
+  static const Color stripe = Color(0xFF635BFF);
 }
