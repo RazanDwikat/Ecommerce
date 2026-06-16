@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/theme/app_colors.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -54,9 +55,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
     final auth = context.watch<AuthProvider>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5DC),
+      backgroundColor: AppColors.skyBlue,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5DC),
+        backgroundColor: AppColors.skyBlue,
         title: const Text('My Orders'),
         actions: [
           IconButton(
@@ -126,33 +127,33 @@ class _OrderCard extends StatelessWidget {
 
   final Map<String, dynamic> order;
 
-  String _getStatusColor(String status) {
+  Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return 'FFA500';
+        return AppColors.statusPending;
       case 'processing':
-        return '2196F3';
+        return AppColors.statusProcessing;
       case 'shipped':
-        return '9C27B0';
+        return AppColors.statusShipped;
       case 'delivered':
-        return '4CAF50';
+        return AppColors.statusDelivered;
       case 'cancelled':
-        return 'F44336';
+        return AppColors.statusCancelled;
       default:
-        return '757575';
+        return AppColors.textSecondary;
     }
   }
 
-  String _getPaymentStatusColor(String status) {
+  Color _getPaymentStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'paid':
-        return '4CAF50';
+        return AppColors.paymentPaid;
       case 'pending':
-        return 'FFA500';
+        return AppColors.paymentPending;
       case 'failed':
-        return 'F44336';
+        return AppColors.paymentFailed;
       default:
-        return '757575';
+        return AppColors.textSecondary;
     }
   }
 
@@ -164,9 +165,12 @@ class _OrderCard extends StatelessWidget {
     final items = order['items'] as List<dynamic>? ?? [];
     final createdAt = order['createdAt'] as String? ?? '';
 
+    final statusColor = _getStatusColor(status);
+    final paymentStatusColor = _getPaymentStatusColor(paymentStatus);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      color: Colors.white,
+      color: AppColors.white,
       elevation: 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
@@ -184,7 +188,7 @@ class _OrderCard extends StatelessWidget {
                   style: GoogleFonts.dmSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 Container(
@@ -193,12 +197,10 @@ class _OrderCard extends StatelessWidget {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Color(
-                      int.parse('0xFF${_getStatusColor(status)}'),
-                    ).withOpacity(0.15),
+                    color: statusColor.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Color(int.parse('0xFF${_getStatusColor(status)}')),
+                      color: statusColor,
                       width: 1,
                     ),
                   ),
@@ -207,7 +209,7 @@ class _OrderCard extends StatelessWidget {
                     style: GoogleFonts.dmSans(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: Color(int.parse('0xFF${_getStatusColor(status)}')),
+                      color: statusColor,
                     ),
                   ),
                 ),
@@ -217,7 +219,7 @@ class _OrderCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey.shade50,
+                color: AppColors.surfaceAlt.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -226,7 +228,7 @@ class _OrderCard extends StatelessWidget {
                   Text(
                     '${items.length} item${items.length != 1 ? 's' : ''}',
                     style: GoogleFonts.dmSans(
-                      color: Colors.grey.shade700,
+                      color: AppColors.textSecondary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -242,7 +244,7 @@ class _OrderCard extends StatelessWidget {
                             width: 4,
                             height: 4,
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade600,
+                              color: AppColors.textSecondary,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -251,7 +253,7 @@ class _OrderCard extends StatelessWidget {
                             child: Text(
                               '${itemData['name'] ?? 'Product'}',
                               style: GoogleFonts.dmSans(
-                                color: Colors.grey.shade800,
+                                color: AppColors.textPrimary,
                                 fontSize: 14,
                               ),
                             ),
@@ -259,7 +261,7 @@ class _OrderCard extends StatelessWidget {
                           Text(
                             'x${itemData['quantity'] ?? 1}',
                             style: GoogleFonts.dmSans(
-                              color: Colors.grey.shade600,
+                              color: AppColors.textSecondary,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
@@ -281,7 +283,7 @@ class _OrderCard extends StatelessWidget {
                     Text(
                       'Payment Status',
                       style: GoogleFonts.dmSans(
-                        color: Colors.grey.shade600,
+                        color: AppColors.textSecondary,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -293,9 +295,7 @@ class _OrderCard extends StatelessWidget {
                           width: 10,
                           height: 10,
                           decoration: BoxDecoration(
-                            color: Color(
-                              int.parse('0xFF${_getPaymentStatusColor(paymentStatus)}'),
-                            ),
+                            color: paymentStatusColor,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -305,9 +305,7 @@ class _OrderCard extends StatelessWidget {
                           style: GoogleFonts.dmSans(
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
-                            color: Color(
-                              int.parse('0xFF${_getPaymentStatusColor(paymentStatus)}'),
-                            ),
+                            color: paymentStatusColor,
                           ),
                         ),
                       ],
@@ -320,7 +318,7 @@ class _OrderCard extends StatelessWidget {
                     Text(
                       'Total Price',
                       style: GoogleFonts.dmSans(
-                        color: Colors.grey.shade600,
+                        color: AppColors.textSecondary,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -331,7 +329,7 @@ class _OrderCard extends StatelessWidget {
                       style: GoogleFonts.dmSans(
                         fontSize: 22,
                         fontWeight: FontWeight.w800,
-                        color: Colors.black87,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ],
@@ -339,20 +337,20 @@ class _OrderCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            Divider(color: Colors.grey.shade200),
+            Divider(color: AppColors.divider),
             const SizedBox(height: 8),
             Row(
               children: [
                 Icon(
                   Icons.calendar_today_outlined,
                   size: 14,
-                  color: Colors.grey.shade500,
+                  color: AppColors.textHint,
                 ),
                 const SizedBox(width: 6),
                 Text(
                   createdAt.isNotEmpty ? _formatDate(createdAt) : '',
                   style: GoogleFonts.dmSans(
-                    color: Colors.grey.shade600,
+                    color: AppColors.textSecondary,
                     fontSize: 12,
                   ),
                 ),

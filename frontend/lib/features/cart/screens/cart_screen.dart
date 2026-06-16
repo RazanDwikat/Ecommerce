@@ -5,10 +5,11 @@ import 'package:provider/provider.dart';
 
 import '../../../core/providers/auth_provider.dart';
 import '../../../core/services/api_service.dart';
+import '../../../core/theme/app_colors.dart';
 
 // =============================================================
 // CART SCREEN
-// =============================================================
+// ===============================                                                                                  ==============================
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
@@ -148,7 +149,7 @@ class _CartScreenState extends State<CartScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: AppColors.divider,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -157,20 +158,20 @@ class _CartScreenState extends State<CartScreen> {
             Text(
               'Choose payment method',
               style: GoogleFonts.dmSans(
-                  fontSize: 20, fontWeight: FontWeight.w700),
+                  fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
             ),
             const SizedBox(height: 6),
             Text(
               'How would you like to pay for your order?',
               style: GoogleFonts.dmSans(
-                  color: Colors.grey.shade600, fontSize: 14),
+                  color: AppColors.textSecondary, fontSize: 14),
             ),
             const SizedBox(height: 24),
             PaymentOptionTile(
               icon: Icons.payments_outlined,
               title: 'Cash on Delivery',
               subtitle: 'Pay when you receive your order',
-              iconColor: Colors.green.shade600,
+              iconColor: AppColors.success,
               onTap: () => Navigator.pop(ctx, 'cash'),
             ),
             
@@ -179,7 +180,7 @@ class _CartScreenState extends State<CartScreen> {
               icon: Icons.credit_card_outlined,
               title: 'Credit Card',
               subtitle: 'Secure online payment',
-              iconColor: const Color(0xFF635BFF),
+              iconColor: AppColors.stripe,
                onTap: () => Navigator.pop(ctx, 'stripe'),
             ),
           ],
@@ -252,7 +253,9 @@ class _CartScreenState extends State<CartScreen> {
     final auth = context.watch<AuthProvider>();
 
     return Scaffold(
+      backgroundColor: AppColors.background,
       appBar: AppBar(
+        backgroundColor: AppColors.background,
         title: const Text('Cart'),
  
         actions: [
@@ -290,15 +293,15 @@ class _CartScreenState extends State<CartScreen> {
           children: [
             Icon(Icons.shopping_cart_outlined,
                 size: 54,
-                color: isError ? Colors.red : Colors.grey.shade600),
+                color: isError ? AppColors.error : AppColors.textSecondary),
             const SizedBox(height: 12),
             Text('Cart',
                 style: GoogleFonts.dmSans(
-                    fontSize: 22, fontWeight: FontWeight.w700)),
+                    fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
             const SizedBox(height: 6),
             Text(message,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.dmSans(color: Colors.grey.shade700)),
+                style: GoogleFonts.dmSans(color: AppColors.textSecondary)),
           ],
         ),
       ),
@@ -311,7 +314,7 @@ class _CartScreenState extends State<CartScreen> {
       children: [
         Text('Your selected items',
             style: GoogleFonts.dmSans(
-                fontSize: 18, fontWeight: FontWeight.w700)),
+                fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
         const SizedBox(height: 12),
         ..._items.map((item) {
           final product = item['product'];
@@ -319,6 +322,7 @@ class _CartScreenState extends State<CartScreen> {
           final price = _productPrice(product) * quantity;
 
           return Card(
+            color: AppColors.white,
             margin: const EdgeInsets.only(bottom: 12),
             child: Padding(
               padding: const EdgeInsets.all(12),
@@ -335,7 +339,7 @@ class _CartScreenState extends State<CartScreen> {
                       errorBuilder: (_, __, ___) => Container(
                         width: 72,
                         height: 72,
-                        color: Colors.grey.shade200,
+                        color: AppColors.surfaceAlt.withOpacity(0.3),
                         child:
                             const Icon(Icons.image_not_supported_outlined),
                       ),
@@ -348,12 +352,12 @@ class _CartScreenState extends State<CartScreen> {
                       children: [
                         Text(_productName(product),
                             style: GoogleFonts.dmSans(
-                                fontSize: 16, fontWeight: FontWeight.w700)),
+                                fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
                         const SizedBox(height: 4),
                         Text(
                             'Price: \$${_productPrice(product).toStringAsFixed(2)}',
                             style: GoogleFonts.dmSans(
-                                color: Colors.grey.shade700)),
+                                color: AppColors.textSecondary)),
                         const SizedBox(height: 8),
                         Row(
                           children: [
@@ -366,7 +370,7 @@ class _CartScreenState extends State<CartScreen> {
                             ),
                             Text('$quantity',
                                 style: GoogleFonts.dmSans(
-                                    fontWeight: FontWeight.w700)),
+                                    fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
                             IconButton(
                               onPressed: () => _updateQuantity(
                                   product['_id'], quantity + 1),
@@ -384,7 +388,7 @@ class _CartScreenState extends State<CartScreen> {
                   IconButton(
                     onPressed: () => _removeItem(product['_id']),
                     icon: const Icon(Icons.delete_outline),
-                    color: Colors.redAccent,
+                    color: AppColors.error,
                   ),
                 ],
               ),
@@ -393,6 +397,7 @@ class _CartScreenState extends State<CartScreen> {
         }),
         const SizedBox(height: 16),
         Card(
+          color: AppColors.white,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -400,14 +405,14 @@ class _CartScreenState extends State<CartScreen> {
               children: [
                 Text('Order summary',
                     style: GoogleFonts.dmSans(
-                        fontSize: 18, fontWeight: FontWeight.w700)),
+                        fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
                 const SizedBox(height: 8),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Subtotal',
                           style: GoogleFonts.dmSans(
-                              color: Colors.grey.shade700)),
+                              color: AppColors.textSecondary)),
                       Text('\$${_total.toStringAsFixed(2)}',
                           style: GoogleFonts.dmSans(
                               fontWeight: FontWeight.w700)),
@@ -418,22 +423,22 @@ class _CartScreenState extends State<CartScreen> {
                     children: [
                       Text('Delivery',
                           style: GoogleFonts.dmSans(
-                              color: Colors.grey.shade700)),
+                              color: AppColors.textSecondary)),
                       Text('Free',
                           style: GoogleFonts.dmSans(
                               fontWeight: FontWeight.w700,
-                              color: Colors.green)),
+                              color: AppColors.success)),
                     ]),
-                const Divider(height: 24),
+                const Divider(height: 24, color: AppColors.divider),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Total',
                           style: GoogleFonts.dmSans(
-                              fontSize: 16, fontWeight: FontWeight.w700)),
+                              fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
                       Text('\$${_total.toStringAsFixed(2)}',
                           style: GoogleFonts.dmSans(
-                              fontSize: 16, fontWeight: FontWeight.w800)),
+                              fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.textPrimary)),
                     ]),
                 const SizedBox(height: 16),
                 SizedBox(
@@ -483,7 +488,7 @@ class PaymentOptionTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade200),
+          border: Border.all(color: AppColors.divider),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -503,14 +508,14 @@ class PaymentOptionTile extends StatelessWidget {
                 children: [
                   Text(title,
                       style: GoogleFonts.dmSans(
-                          fontSize: 15, fontWeight: FontWeight.w700)),
+                          fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
                   Text(subtitle,
                       style: GoogleFonts.dmSans(
-                          fontSize: 13, color: Colors.grey.shade600)),
+                          fontSize: 13, color: AppColors.textSecondary)),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: Colors.grey.shade400),
+            Icon(Icons.chevron_right, color: AppColors.textHint),
           ],
         ),
       ),
@@ -624,36 +629,37 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
     return InputDecoration(
       hintText: hint,
       hintStyle:
-          GoogleFonts.dmSans(color: Colors.grey.shade400, fontSize: 14),
+          GoogleFonts.dmSans(color: AppColors.textHint, fontSize: 14),
       suffixIcon: suffix,
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+        borderSide: BorderSide(color: AppColors.inputBorder),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+        borderSide: BorderSide(color: AppColors.inputBorder),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF635BFF), width: 1.8),
+        borderSide: BorderSide(color: AppColors.stripe, width: 1.8),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.red),
+        borderSide: BorderSide(color: AppColors.error),
       ),
       filled: true,
-      fillColor: Colors.grey.shade50,
+      fillColor: AppColors.inputFill,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    const stripeColor = Color(0xFF635BFF);
+    final stripeColor = AppColors.stripe;
 
     return Dialog(
+      backgroundColor: AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       insetPadding: const EdgeInsets.all(16),
       child: SingleChildScrollView(
@@ -684,11 +690,11 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                         children: [
                           Text('Stripe Payment',
                               style: GoogleFonts.dmSans(
-                                  fontSize: 18, fontWeight: FontWeight.w700)),
+                                  fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
                           Text('Simulator mode',
                               style: GoogleFonts.dmSans(
                                   fontSize: 12,
-                                  color: stripeColor,
+                                  color: AppColors.stripe,
                                   fontWeight: FontWeight.w600)),
                         ],
                       ),
@@ -707,24 +713,24 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: AppColors.surfaceAlt.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     'Amount: \$${widget.amount.toStringAsFixed(2)}',
                     style: GoogleFonts.dmSans(
                         fontWeight: FontWeight.w700,
-                        color: Colors.grey.shade800),
+                        color: AppColors.textPrimary),
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Divider(),
+                const Divider(color: AppColors.divider),
                 const SizedBox(height: 16),
 
                 // Cardholder name
                 Text('Cardholder Name',
                     style: GoogleFonts.dmSans(
-                        fontWeight: FontWeight.w600, fontSize: 13)),
+                        fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
                 const SizedBox(height: 6),
                 TextFormField(
                   controller: _nameController,
@@ -738,13 +744,13 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                 // Card number
                 Text('Card Number',
                     style: GoogleFonts.dmSans(
-                        fontWeight: FontWeight.w600, fontSize: 13)),
+                        fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
                 const SizedBox(height: 6),
                 TextFormField(
                   controller: _cardNumberController,
                   decoration: _inputDecoration('1234 5678 9012 3456',
                       suffix: const Icon(Icons.credit_card_outlined,
-                          size: 20, color: Colors.grey)),
+                          size: 20, color: AppColors.textHint)),
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -770,7 +776,7 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                         children: [
                           Text('Expiry',
                               style: GoogleFonts.dmSans(
-                                  fontWeight: FontWeight.w600, fontSize: 13)),
+                                  fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _expiryController,
@@ -794,7 +800,7 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                         children: [
                           Text('CVV',
                               style: GoogleFonts.dmSans(
-                                  fontWeight: FontWeight.w600, fontSize: 13)),
+                                  fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: _cvvController,
@@ -819,8 +825,8 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.amber.shade50,
-                    border: Border.all(color: Colors.amber.shade200),
+                    color: AppColors.surface.withOpacity(0.5),
+                    border: Border.all(color: AppColors.divider),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -828,14 +834,14 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                     children: [
                       Row(children: [
                         const Icon(Icons.science_outlined,
-                            size: 16, color: Colors.orange),
+                            size: 16, color: AppColors.primary),
                         const SizedBox(width: 6),
                         Text(
                           'Simulator — Test Scenario',
                           style: GoogleFonts.dmSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: Colors.orange.shade800),
+                              color: AppColors.textPrimary),
                         ),
                       ]),
                       const SizedBox(height: 10),
@@ -864,12 +870,12 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: _isSuccess
-                          ? Colors.green.shade50
-                          : Colors.red.shade50,
+                          ? AppColors.success.withOpacity(0.1)
+                          : AppColors.error.withOpacity(0.1),
                       border: Border.all(
                           color: _isSuccess
-                              ? Colors.green.shade200
-                              : Colors.red.shade200),
+                              ? AppColors.success
+                              : AppColors.error),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(children: [
@@ -877,7 +883,7 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                         _isSuccess
                             ? Icons.check_circle_outline
                             : Icons.error_outline,
-                        color: _isSuccess ? Colors.green : Colors.red,
+                        color: _isSuccess ? AppColors.success : AppColors.error,
                         size: 18,
                       ),
                       const SizedBox(width: 8),
@@ -886,8 +892,8 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                           _resultMessage!,
                           style: GoogleFonts.dmSans(
                             color: _isSuccess
-                                ? Colors.green.shade800
-                                : Colors.red.shade800,
+                                ? AppColors.success
+                                : AppColors.error,
                             fontWeight: FontWeight.w600,
                             fontSize: 13,
                           ),
@@ -905,8 +911,8 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                   child: ElevatedButton(
                     onPressed: _processing ? null : _submitPayment,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: stripeColor,
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.stripe,
+                      foregroundColor: AppColors.white,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14)),
                       elevation: 0,
@@ -916,7 +922,7 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                             width: 22,
                             height: 22,
                             child: CircularProgressIndicator(
-                                color: Colors.white, strokeWidth: 2.5),
+                                color: AppColors.white, strokeWidth: 2.5),
                           )
                         : Text(
                             'Pay \$${widget.amount.toStringAsFixed(2)}',
@@ -933,11 +939,11 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.lock_outline,
-                          size: 12, color: Colors.grey),
+                          size: 12, color: AppColors.textHint),
                       const SizedBox(width: 4),
                       Text('Powered by Stripe (Simulator)',
                           style: GoogleFonts.dmSans(
-                              fontSize: 11, color: Colors.grey.shade500)),
+                              fontSize: 11, color: AppColors.textHint)),
                     ],
                   ),
                 ),
@@ -972,9 +978,9 @@ class ScenarioChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? Colors.orange.shade100 : Colors.white,
+          color: selected ? AppColors.primaryLight.withOpacity(0.3) : AppColors.white,
           border: Border.all(
-            color: selected ? Colors.orange : Colors.grey.shade300,
+            color: selected ? AppColors.primary : AppColors.divider,
             width: selected ? 1.5 : 1,
           ),
           borderRadius: BorderRadius.circular(8),
@@ -987,7 +993,7 @@ class ScenarioChip extends StatelessWidget {
                   ? Icons.radio_button_checked
                   : Icons.radio_button_off,
               size: 16,
-              color: selected ? Colors.orange : Colors.grey,
+              color: selected ? AppColors.primary : AppColors.textHint,
             ),
             const SizedBox(width: 6),
             Text(
@@ -997,8 +1003,8 @@ class ScenarioChip extends StatelessWidget {
                 fontWeight:
                     selected ? FontWeight.w700 : FontWeight.w400,
                 color: selected
-                    ? Colors.orange.shade800
-                    : Colors.grey.shade700,
+                    ? AppColors.textPrimary
+                    : AppColors.textSecondary,
               ),
             ),
           ],
