@@ -9,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../cart/screens/cart_screen.dart';
 import '../../categories/screens/categories_screen.dart';
 import '../../orders/screens/orders_screen.dart';
+import '../../products/screens/product_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -221,26 +222,30 @@ class _ProductCardState extends State<_ProductCard> {
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 108,
-            width: double.infinity,
-            color: AppColors.skyBlue.withValues(alpha: 0.35),
-            child: widget.product.imageUrl == null
-                ? const Center(child: Icon(Icons.shopping_bag_outlined, size: 30, color: AppColors.textPrimary))
-                : ClipRRect(
-                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
-                    child: Image.network(
-                      widget.product.imageUrl!,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: 108,
-                      errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.image_not_supported_outlined, size: 28)),
+      child: InkWell(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => ProductDetailScreen(product: widget.product)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 108,
+              width: double.infinity,
+              color: AppColors.skyBlue.withValues(alpha: 0.35),
+              child: widget.product.imageUrl == null
+                  ? const Center(child: Icon(Icons.shopping_bag_outlined, size: 30, color: AppColors.textPrimary))
+                  : ClipRRect(
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(16), topRight: Radius.circular(16)),
+                      child: Image.network(
+                        widget.product.imageUrl!,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 108,
+                        errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.image_not_supported_outlined, size: 28)),
+                      ),
                     ),
-                  ),
-          ),
+            ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(10),
@@ -311,6 +316,7 @@ class _ProductCardState extends State<_ProductCard> {
           ),
         ],
       ),
+        ),
     );
   }
 }

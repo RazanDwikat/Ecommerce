@@ -182,4 +182,72 @@ Future<Map<String, dynamic>> getOrderById(String token, String orderId) async {
       throw Exception(error['message'] ?? 'Registration failed');
     }
   }
+
+  Future<Map<String, dynamic>> getProductReviews(String productId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/reviews/products/$productId'),
+    );
+    return _handleResponse(response, 'Failed to fetch reviews');
+  }
+
+  Future<Map<String, dynamic>> createReview(String token, String productId, int rating, String comment) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/reviews/products/$productId'),
+      headers: _authHeaders(token),
+      body: jsonEncode({
+        'rating': rating,
+        'comment': comment,
+      }),
+    );
+    return _handleResponse(response, 'Failed to create review');
+  }
+
+  Future<Map<String, dynamic>> updateReview(String token, String reviewId, int? rating, String? comment) async {
+    final body = <String, dynamic>{};
+    if (rating != null) body['rating'] = rating;
+    if (comment != null) body['comment'] = comment;
+
+    final response = await http.patch(
+      Uri.parse('$baseUrl/reviews/$reviewId'),
+      headers: _authHeaders(token),
+      body: jsonEncode(body),
+    );
+    return _handleResponse(response, 'Failed to update review');
+  }
+
+  Future<Map<String, dynamic>> deleteReview(String token, String reviewId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/reviews/$reviewId'),
+      headers: _authHeaders(token),
+    );
+    return _handleResponse(response, 'Failed to delete review');
+  }
+
+  Future<bool> hasUserPurchasedProduct(String token, String productId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/orders/my-orders'),
+        headers: _authHeaders(token),
+      );
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        final orders = body['orders'] as List<dynamic>? ?? [];
+
+        for (var order in orders) {
+          final items = order['items'] as List<dynamic>? ?? [];
+          for (var item in items) {
+            final itemProductId = item['product']?['_id']?.toString() ?? item['productId']?.toString();
+            if (itemProductId == productId) {
+              return true;
+            }
+          }
+        }
+      }
+    } catch (_) {
+      return false;
+    }
+
+    return false;
+  }
 }

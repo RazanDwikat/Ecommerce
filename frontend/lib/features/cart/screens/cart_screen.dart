@@ -681,7 +681,7 @@ class _StripeFormDialogState extends State<StripeFormDialog> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Icon(Icons.credit_card,
-                          color: stripeColor, size: 22),
+                          color:Colors.white, size: 22),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
