@@ -250,4 +250,136 @@ Future<Map<String, dynamic>> getOrderById(String token, String orderId) async {
 
     return false;
   }
+
+  // ── Admin: Categories ────────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> createCategory(String token, String name, String description) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/categories'),
+      headers: _authHeaders(token),
+      body: jsonEncode({
+        'name': name,
+        'description': description,
+      }),
+    );
+    return _handleResponse(response, 'Failed to create category');
+  }
+
+  Future<Map<String, dynamic>> getAllCategoriesAdmin(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/categories'),
+      headers: _authHeaders(token),
+    );
+    return _handleResponse(response, 'Failed to fetch categories');
+  }
+
+  Future<Map<String, dynamic>> getCategoryByIdAdmin(String token, String categoryId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/categories/$categoryId'),
+      headers: _authHeaders(token),
+    );
+    return _handleResponse(response, 'Failed to fetch category');
+  }
+
+  Future<Map<String, dynamic>> updateCategory(String token, String categoryId, String? name, String? description) async {
+    final body = <String, dynamic>{};
+    if (name != null) body['name'] = name;
+    if (description != null) body['description'] = description;
+
+    final response = await http.patch(
+      Uri.parse('$baseUrl/categories/$categoryId'),
+      headers: _authHeaders(token),
+      body: jsonEncode(body),
+    );
+    return _handleResponse(response, 'Failed to update category');
+  }
+
+  Future<Map<String, dynamic>> deleteCategory(String token, String categoryId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/categories/$categoryId'),
+      headers: _authHeaders(token),
+    );
+    return _handleResponse(response, 'Failed to delete category');
+  }
+
+  Future<Map<String, dynamic>> restoreCategory(String token, String categoryId) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/categories/restore/$categoryId'),
+      headers: _authHeaders(token),
+    );
+    return _handleResponse(response, 'Failed to restore category');
+  }
+
+  // ── Admin: Products ───────────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> createProduct(String token, Map<String, dynamic> productData) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/products'),
+      headers: _authHeaders(token),
+      body: jsonEncode(productData),
+    );
+    return _handleResponse(response, 'Failed to create product');
+  }
+
+  Future<Map<String, dynamic>> getAllProductsAdmin(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/products'),
+      headers: _authHeaders(token),
+    );
+    return _handleResponse(response, 'Failed to fetch products');
+  }
+
+  Future<Map<String, dynamic>> getProductByIdAdmin(String token, String productId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/products/$productId'),
+      headers: _authHeaders(token),
+    );
+    return _handleResponse(response, 'Failed to fetch product');
+  }
+
+  Future<Map<String, dynamic>> updateProduct(String token, String productId, Map<String, dynamic> productData) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/products/$productId'),
+      headers: _authHeaders(token),
+      body: jsonEncode(productData),
+    );
+    return _handleResponse(response, 'Failed to update product');
+  }
+
+  Future<Map<String, dynamic>> deleteProduct(String token, String productId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/products/$productId'),
+      headers: _authHeaders(token),
+    );
+    return _handleResponse(response, 'Failed to delete product');
+  }
+
+  // ── Admin: Orders ────────────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> getAllOrdersAdmin(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/orders/admin/orders'),
+      headers: _authHeaders(token),
+    );
+    return _handleResponse(response, 'Failed to fetch orders');
+  }
+
+  Future<Map<String, dynamic>> updateOrderStatus(String token, String orderId, String status) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/orders/admin/orders/$orderId/status'),
+      headers: _authHeaders(token),
+      body: jsonEncode({'status': status}),
+    );
+    return _handleResponse(response, 'Failed to update order status');
+  }
+
+  // ── Admin: Reviews ────────────────────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> deleteReviewAdmin(String token, String reviewId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/reviews/$reviewId'),
+      headers: _authHeaders(token),
+    );
+    return _handleResponse(response, 'Failed to delete review');
+  }
 }
