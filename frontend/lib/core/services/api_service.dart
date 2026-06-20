@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class ApiService {
@@ -312,12 +313,27 @@ Future<Map<String, dynamic>> getOrderById(String token, String orderId) async {
 
   // ── Admin: Products ───────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> createProduct(String token, Map<String, dynamic> productData) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/products'),
-      headers: _authHeaders(token),
-      body: jsonEncode(productData),
-    );
+  Future<Map<String, dynamic>> createProduct(String token, Map<String, dynamic> productData, List<String> imagePaths, List<Uint8List> imageBytes) async {
+    final request = http.MultipartRequest('POST', Uri.parse('$baseUrl/products'));
+    request.headers.addAll(_authHeaders(token));
+    
+    request.fields['name'] = productData['name'];
+    request.fields['description'] = productData['description'];
+    request.fields['price'] = productData['price'].toString();
+    request.fields['category'] = productData['category'];
+    request.fields['stock'] = productData['stock'].toString();
+    
+    for (final imagePath in imagePaths) {
+      final file = await http.MultipartFile.fromPath('images', imagePath);
+      request.files.add(file);
+    }
+    
+    for (final bytes in imageBytes) {
+      final file = http.MultipartFile.fromBytes('images', bytes);
+      request.files.add(file);
+    }
+    
+    final response = await http.Response.fromStream(await request.send());
     return _handleResponse(response, 'Failed to create product');
   }
 
@@ -337,12 +353,36 @@ Future<Map<String, dynamic>> getOrderById(String token, String orderId) async {
     return _handleResponse(response, 'Failed to fetch product');
   }
 
-  Future<Map<String, dynamic>> updateProduct(String token, String productId, Map<String, dynamic> productData) async {
-    final response = await http.patch(
-      Uri.parse('$baseUrl/products/$productId'),
-      headers: _authHeaders(token),
-      body: jsonEncode(productData),
-    );
+  Future<Map<String, dynamic>> updateProduct(String token, String productId, Map<String, dynamic> productData, List<String> imagePaths, List<Uint8List> imageBytes) async {
+    if (imagePaths.isEmpty && imageBytes.isEmpty) {
+      final response = await http.patch(
+        Uri.parse('$baseUrl/products/$productId'),
+        headers: _authHeaders(token),
+        body: jsonEncode(productData),
+      );
+      return _handleResponse(response, 'Failed to update product');
+    }
+
+    final request = http.MultipartRequest('PATCH', Uri.parse('$baseUrl/products/$productId'));
+    request.headers.addAll(_authHeaders(token));
+    
+    request.fields['name'] = productData['name'];
+    request.fields['description'] = productData['description'];
+    request.fields['price'] = productData['price'].toString();
+    request.fields['category'] = productData['category'];
+    request.fields['stock'] = productData['stock'].toString();
+    
+    for (final imagePath in imagePaths) {
+      final file = await http.MultipartFile.fromPath('images', imagePath);
+      request.files.add(file);
+    }
+    
+    for (final bytes in imageBytes) {
+      final file = http.MultipartFile.fromBytes('images', bytes);
+      request.files.add(file);
+    }
+    
+    final response = await http.Response.fromStream(await request.send());
     return _handleResponse(response, 'Failed to update product');
   }
 

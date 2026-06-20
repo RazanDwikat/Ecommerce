@@ -10,6 +10,7 @@ import '../../cart/screens/cart_screen.dart';
 import '../../categories/screens/categories_screen.dart';
 import '../../orders/screens/orders_screen.dart';
 import '../../products/screens/product_detail_screen.dart';
+import '../../admin/screens/admin_dashboard_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -69,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final filtered = _filteredProducts;
+    final auth = context.watch<AuthProvider>();
 
     final categoryOptions = ['All', ..._categories.map((category) => category.name).toList()];
 
@@ -81,6 +83,12 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('ShopHub', style: TextStyle(fontWeight: FontWeight.w700)),
         centerTitle: false,
         actions: [
+          if (auth.isAdmin)
+            IconButton(
+              icon: const Icon(Icons.admin_panel_settings_outlined),
+              onPressed: () => _open(const AdminDashboardScreen()),
+              tooltip: 'Admin Dashboard',
+            ),
           IconButton(icon: const Icon(Icons.shopping_cart_outlined), onPressed: () => _open(CartScreen())),
           IconButton(icon: const Icon(Icons.receipt_long_outlined), onPressed: () => _open(OrdersScreen())),
           IconButton(icon: const Icon(Icons.category_outlined), onPressed: () => _open(CategoriesScreen())),
