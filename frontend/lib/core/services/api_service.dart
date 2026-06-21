@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class ApiService {
   final String baseUrl = 'http://localhost:3000';
@@ -328,8 +329,13 @@ Future<Map<String, dynamic>> getOrderById(String token, String orderId) async {
       request.files.add(file);
     }
     
-    for (final bytes in imageBytes) {
-      final file = http.MultipartFile.fromBytes('images', bytes);
+    for (int i = 0; i < imageBytes.length; i++) {
+      final file = http.MultipartFile.fromBytes(
+        'images',
+        imageBytes[i],
+        filename: 'image_$i.jpg',
+        contentType: MediaType('image', 'jpeg'),
+      );
       request.files.add(file);
     }
     
@@ -377,8 +383,13 @@ Future<Map<String, dynamic>> getOrderById(String token, String orderId) async {
       request.files.add(file);
     }
     
-    for (final bytes in imageBytes) {
-      final file = http.MultipartFile.fromBytes('images', bytes);
+    for (int i = 0; i < imageBytes.length; i++) {
+      final file = http.MultipartFile.fromBytes(
+        'images',
+        imageBytes[i],
+        filename: 'image_$i.jpg',
+        contentType: MediaType('image', 'jpeg'),
+      );
       request.files.add(file);
     }
     

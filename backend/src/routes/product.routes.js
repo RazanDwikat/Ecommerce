@@ -32,6 +32,8 @@ router.post(
   (req, res, next) => {
     if (req.files && req.files.length > 0) {
       req.body.images = req.files.map((file) => `/uploads/${file.filename}`);
+    } else {
+      req.body.images = [];
     }
     next();
   },
